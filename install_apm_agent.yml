@@ -1,0 +1,38 @@
+---
+# install dynatrace apm agent
+- hosts: local
+  vars:
+    app_name: msr-api
+  handlers:
+    - name: restart nodejs
+      shell: echo restarting applications {{app_name}}.
+
+    - name: soft-restart msr-api
+      shell: slc ctl soft-restart 1
+
+  tasks:
+    - name: create downloads folder
+      file: path=/opt/AnsibleTemp/downloads state=directory
+
+    - name: download agent
+      shell: wget --no-check-certificate -O Dynatrace-OneAgent-Linux-1.103.237.sh "https://yor583.dynatrace-managed.com/e/a8fee25e-45b3-4052-97b0-3b0019aedc06/installer/agent/unix/latest/o9MvrGcpcX0p6DzV/a8fee25e-45b3-4052-97b0-3b0019aedc06"
+      args:
+        chdir: "/opt/AnsibleTemp/downloads"
+
+    - name: install agent
+      shell: /bin/sh Dynatrace-OneAgent-Linux-1.103.237.sh APP_LOG_CONTENT_ACCESS=1
+      args:
+        chdir: "/opt/AnsibleTemp/downloads"
+      notify:
+        - restart nodejs
+
+    #- name: download nodejs
+    #  shell: wget https://nodejs.org/dist/v6.9.1/node-v6.9.1.tar.gz
+    #  args:
+    #    chdir: "/opt/downloads"
+
+    #- name: uninstall agent
+    #  shell: ./uninstall.sh
+    #  args:
+    #    chdir: "/opt/dynatrace/oneagent/agent"
+

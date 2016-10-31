@@ -1,0 +1,9 @@
+[msr-api]
+172.18.1.166
+
+[stk]
+172.16.98.166
+172.16.98.164
+
+[local]
+localhost ansible_ssh_port=9022

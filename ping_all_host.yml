@@ -1,0 +1,16 @@
+---
+# ping all host
+- hosts: local
+  remote_user: root
+  tasks:
+    - name: ping all hosts
+      ping:
+
+    - name: touch a file
+      file: state=touch dest=a.txt
+      notify:
+        - remove txt file
+
+  handlers:
+    - name: remove txt file
+      file: state=absent dest=a.txt

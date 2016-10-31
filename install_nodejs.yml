@@ -1,0 +1,61 @@
+---
+# install dynatrace apm agent
+- hosts: local
+  vars:
+    app_name: msr-api
+  handlers:
+    - name: restart nodejs
+      shell: echo restarting applications {{app_name}}.
+
+    - name: soft-restart msr-api
+      shell: slc ctl soft-restart 1
+
+  tasks:
+    - name: install gcc
+      yum: state=latest name=gcc
+
+    - name: install make
+      yum: state=latest name=make
+
+    - name: install gcc-c++
+      yum: state=latest name=gcc-c++
+
+    - name: install openssl-devel
+      yum: state=latest name=openssl-devel
+
+    - name: install wget
+      yum: state=latest name=wget
+
+    - name: create download folder
+      file: state=directory dest=/opt/downloads/
+
+    #- name: download agent
+    #  shell: wget --no-check-certificate -O Dynatrace-OneAgent-Linux-1.103.237.sh "https://yor583.dynatrace-managed.com/e/a8fee25e-45b3-4052-97b0-3b0019aedc06/installer/agent/unix/latest/o9MvrGcpcX0p6DzV/a8fee25e-45b3-4052-97b0-3b0019aedc06"
+
+    #- name: install agent
+    #  shell: /bin/sh Dynatrace-OneAgent-Linux-1.103.237.sh APP_LOG_CONTENT_ACCESS=1
+    #  notify:
+    #    - restart nodejs
+
+    #- name: download nodejs
+    #  shell: wget https://nodejs.org/dist/v6.9.1/node-v6.9.1.tar.gz
+    #  args:
+    #    chdir: "/opt/downloads"
+
+    - name: Fetch dynatrace node agent
+      get_url:
+        url=https://nodejs.org/dist/v6.9.1/node-v6.9.1.tar.gz
+        dest=/opt/downloads/node-v6.9.1.tar.gz
+        force=no
+
+    - name: Unarchive NodeJS
+      shell: tar -zxvf node-v6.9.1.tar.gz
+      args:
+        chdir: "/opt/downloads"
+
+    - name: install nodejs
+      shell: make
+      args:
+        chdir: "/opt/downloads/node-v6.9.1"
+
+
